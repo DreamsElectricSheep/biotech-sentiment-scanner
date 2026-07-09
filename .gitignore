@@ -1,0 +1,33 @@
+# Secrets / local config
+.env
+*.env
+config.local.py
+
+# Telethon session files (live credentials — never commit)
+*.session
+*.session-journal
+
+# Runtime data / scraped community content / analysis output
+data/
+*_corpus.*
+*_corpus.json
+*_corpus.txt
+*_state.json
+*_analysis.json
+*_signals.json
+*_backtest.json
+*.log
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+env/
+*.egg-info/
+
+# OS/editor cruft
+.DS_Store
+.vscode/
+.idea/
