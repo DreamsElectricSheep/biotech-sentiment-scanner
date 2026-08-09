@@ -2,7 +2,7 @@
 """
 Community Corpus Builder
 Re-scrapes the configured Telegram group and saves full analytical message
-TEXT (not just scores) — filtered for length + analytical-keyword match so
+TEXT (not just scores), filtered for length + analytical-keyword match so
 it's a corpus of substantive discussion, not scoring noise/spam.
 
 This is what makes the sentiment pipeline auditable rather than a black box:
@@ -13,7 +13,7 @@ Output: data/corpus.json, data/corpus.txt (plain text, e.g. for uploading to
 an LLM for qualitative review).
 
 NOTE: this aggregates message TEXT for analysis, not for republishing or
-attributing individual users — see README "Ethical considerations" before
+attributing individual users; see README "Ethical considerations" before
 pointing this at a community.
 """
 import json
@@ -38,7 +38,7 @@ MIN_LENGTH = 150
 
 # Base keyword set is generic pharma/regulatory/financial vocabulary. Add
 # ticker-specific terms (drug names, trial names, indications) via
-# EXTRA_ANALYTICAL_KEYWORDS in .env — see .env.example for the NWBO example.
+# EXTRA_ANALYTICAL_KEYWORDS in .env; see .env.example for the NWBO example.
 ANALYTICAL_KEYWORDS = {
     'fda', 'trial', 'approval', 'approved', 'clinical', 'data', 'results',
     'pdufa', 'nda', 'bla', 'phase', 'endpoint', 'efficacy', 'safety',
@@ -73,7 +73,7 @@ async def build_corpus():
     async with TelegramClient(SESSION, API_ID, API_HASH) as client:
         entity = await client.get_entity(GROUP_ID)
         log.info(f'Connected to: {entity.title}')
-        log.info('Pulling messages — this can take a while for large/old groups...')
+        log.info('Pulling messages, this can take a while for large/old groups...')
 
         total = 0
         kept = 0
@@ -107,7 +107,7 @@ async def build_corpus():
     log.info(f'JSON saved: {OUT_JSON}')
 
     lines = [
-        f'{TICKER} INVESTOR COMMUNITY — ANALYTICAL POSTS',
+        f'{TICKER} INVESTOR COMMUNITY: ANALYTICAL POSTS',
         f'Total posts extracted: {len(corpus):,}',
         '=' * 60,
         '',

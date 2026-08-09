@@ -5,7 +5,7 @@ Fires a Telegram message when data/analysis.json crosses ALERT_THRESHOLD.
 
 Edge-triggered by design: it only fires ONCE on a threshold crossing (up or
 down), not every run while the value stays above/below the line. This is a
-deliberate anti-noise choice — without the hysteresis in alerted_above, this
+deliberate anti-noise choice. Without the hysteresis in alerted_above, this
 would re-fire on every single cron tick while sentiment sits near the
 threshold, which is exactly the alert fatigue this tool is trying to avoid.
 
@@ -31,7 +31,7 @@ TELEGRAM_CHAT_ID = config.TELEGRAM_CHAT_ID
 
 def send_telegram(msg):
     if not TELEGRAM_BOT_TOKEN or not TELEGRAM_CHAT_ID:
-        print('[threshold_alert] No TELEGRAM_BOT_TOKEN/TELEGRAM_CHAT_ID configured — skipping send')
+        print('[threshold_alert] No TELEGRAM_BOT_TOKEN/TELEGRAM_CHAT_ID configured, skipping send')
         return
     try:
         requests.post(f'https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage',
@@ -42,7 +42,7 @@ def send_telegram(msg):
 
 def main():
     if not os.path.exists(ANALYSIS_FILE):
-        print(f'[threshold_alert] {ANALYSIS_FILE} not found — run sentiment_analyzer.py first')
+        print(f'[threshold_alert] {ANALYSIS_FILE} not found: run sentiment_analyzer.py first')
         return
 
     data = json.load(open(ANALYSIS_FILE))
@@ -67,17 +67,17 @@ def main():
             f'<b>{TICKER} Approval-Probability Alert</b>\n'
             f'Probability <b>{prob:.1f}%</b> crossed threshold ({THRESHOLD:.0f}%)\n'
             f'Trend: {trend:+.1f}% 7d ({label})\nGenerated: {generated}\n\n'
-            f'This is a conviction/attention flag, not a trading signal — DYOR.'
+            f'This is a conviction/attention flag, not a trading signal: DYOR.'
         )
         state['alerted_above'] = True
-        print(f'[threshold_alert] ALERT SENT — {prob:.1f}% crossed {THRESHOLD:.0f}%')
+        print(f'[threshold_alert] ALERT SENT: {prob:.1f}% crossed {THRESHOLD:.0f}%')
     elif crossed_down and was_above:
         send_telegram(
-            f'<b>{TICKER} Alert</b> — dropped below threshold\n'
+            f'<b>{TICKER} Alert</b>: dropped below threshold\n'
             f'Probability: <b>{prob:.1f}%</b> (was above {THRESHOLD:.0f}%)'
         )
         state['alerted_above'] = False
-        print(f'[threshold_alert] Reset — {prob:.1f}% fell below {THRESHOLD:.0f}%')
+        print(f'[threshold_alert] Reset: {prob:.1f}% fell below {THRESHOLD:.0f}%')
     else:
         print(f'[threshold_alert] No cross. prob={prob:.1f}% prev={prev_prob:.1f}% above={was_above}')
 

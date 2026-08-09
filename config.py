@@ -2,14 +2,14 @@
 Shared configuration for the biotech community sentiment scanner.
 
 Everything here is loaded from environment variables (optionally via a
-`.env` file — see `.env.example`). Nothing in this file is a real credential
+`.env` file; see `.env.example`). Nothing in this file is a real credential
 or a community-specific value; the NWBO defaults that appear as fallbacks
 are the *documented example* this tool was originally built around
 (Northwest Biotherapeutics' Telegram investor community), not a requirement
 to use that community.
 
 To point this at a different ticker/community, set the env vars in
-`.env.example` — you don't need to touch any of the six scripts.
+`.env.example`. You don't need to touch any of the six scripts.
 """
 import os
 import tempfile
@@ -59,7 +59,7 @@ TELEGRAM_INVITE_HASH = _get("TELEGRAM_INVITE_HASH")  # hash from t.me/joinchat/H
 TELEGRAM_BOT_TOKEN = _get("TELEGRAM_BOT_TOKEN")
 TELEGRAM_CHAT_ID = _get("TELEGRAM_CHAT_ID")
 
-# ── Gemini — used ONLY for rationale/summary generation, never for signal
+# ── Gemini: used ONLY for rationale/summary generation, never for signal
 #    generation or trading decisions. See README "Autonomy boundary". ────────
 GEMINI_API_KEY = _get("GEMINI_API_KEY")
 GEMINI_MODEL = _get("GEMINI_MODEL", "gemini-2.0-flash-lite")
@@ -76,7 +76,7 @@ COMPANY_DESCRIPTION = _get(
 # ── Approval-probability model base rate ──────────────────────────────────────
 # Starting point the sentiment adjustment is applied on top of. The NWBO
 # default below reflects a rough base rate for an oncology drug with positive
-# Phase 3 overall-survival data — pick a number appropriate to your own name's
+# Phase 3 overall-survival data. Pick a number appropriate to your own name's
 # regulatory pathway/indication, this is a coarse prior, not a calibrated model.
 BASE_APPROVAL_PROB = float(_get("BASE_APPROVAL_PROB", "0.48"))
 

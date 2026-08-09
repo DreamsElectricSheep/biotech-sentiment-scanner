@@ -174,7 +174,7 @@ async def run_scanner():
 
     async with TelegramClient(SESSION, API_ID, API_HASH) as client:
 
-        # Resolve entity — handle invite link, numeric ID, or username
+        # Resolve entity: handle invite link, numeric ID, or username
         entity = None
         try:
             entity = await client.get_entity(TARGET_CHAT)

@@ -42,7 +42,7 @@ log = logging.getLogger(__name__)
 # ── Approval Signal Lexicon ────────────────────────────────────────────────────
 # Base lexicon is generic FDA/regulatory-approval and trading language.
 # Ticker/drug-specific jargon (e.g. a drug name, trial acronym, or indication)
-# should go in EXTRA_*_TERMS in your .env rather than here — see .env.example
+# should go in EXTRA_*_TERMS in your .env rather than here; see .env.example
 # for the NWBO worked example (dcvax, glioblastoma, etc.)
 STRONG_BULL = {
     'fda approved', 'approval granted', 'full approval', 'pdufa approved',
@@ -83,7 +83,7 @@ WEAK_BEAR = {
 }
 
 # Base approval rate before any community-sentiment adjustment. This is a
-# coarse prior for the ticker's indication/regulatory pathway — set
+# coarse prior for the ticker's indication/regulatory pathway. Set
 # BASE_APPROVAL_PROB in .env to something appropriate for your own name;
 # the default here (0.48) reflects NWBO's Phase 3 overall-survival profile,
 # not a general-purpose FDA base rate.
@@ -296,7 +296,7 @@ async def fetch_and_analyze():
 def send_telegram_report(analysis: dict):
     """Send daily approval-probability report via Telegram bot."""
     if not BOT_TOKEN or not CHAT_ID:
-        log.warning('No Telegram bot token/chat id configured — skipping report send')
+        log.warning('No Telegram bot token/chat id configured, skipping report send')
         return
 
     import requests
@@ -365,7 +365,7 @@ async def main():
     if LOCK_FILE.exists():
         age_secs = datetime.now().timestamp() - LOCK_FILE.stat().st_mtime
         if age_secs < 3600:
-            log.warning(f'Lock file exists ({age_secs:.0f}s old) — another instance running. Exiting.')
+            log.warning(f'Lock file exists ({age_secs:.0f}s old); another instance running. Exiting.')
             return None
         log.warning(f'Removing stale lock file ({age_secs:.0f}s old)')
         LOCK_FILE.unlink(missing_ok=True)

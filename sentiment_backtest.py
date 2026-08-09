@@ -7,11 +7,11 @@ sentiment_analyzer.py) against actual price history. Answers:
   - What lag maximises predictive power?
   - Backtest: buy when prob > BUY_THRESH, sell when prob < SELL_THRESH
 
-IMPORTANT — read this before trusting the output: when this was run against
+IMPORTANT: read this before trusting the output. When this was run against
 NWBO's 8-year Telegram history, the honest finding was that sentiment LAGS
 price rather than leading it. That is, the community's own conviction tends
 to follow price moves rather than predict them. This script is provided so
-you can run the same test against your own ticker/community — it is not a
+you can run the same test against your own ticker/community. It is not a
 claim that any community's sentiment has directional predictive power. See
 the README's "Honest finding" section before using this as a trading signal.
 
@@ -42,7 +42,7 @@ BOT_TOKEN = config.TELEGRAM_BOT_TOKEN
 CHAT_ID = config.TELEGRAM_CHAT_ID
 
 if not ANALYSIS_FILE.exists():
-    print(f'{ANALYSIS_FILE} not found — run sentiment_analyzer.py first.')
+    print(f'{ANALYSIS_FILE} not found. Run sentiment_analyzer.py first.')
     sys.exit(1)
 
 # ── load sentiment series ─────────────────────────────────────────────────────
@@ -64,7 +64,7 @@ for ts, row in hist.iterrows():
 common = sorted(set(sent) & set(prices))
 if len(common) < 10:
     print(f'Only {len(common)} overlapping days between sentiment series and price '
-          f'history — not enough data to backtest.')
+          f'history: not enough data to backtest.')
     sys.exit(1)
 print(f'Common days: {len(common)}  ({common[0]} to {common[-1]})')
 
@@ -261,7 +261,7 @@ if BOT_TOKEN and CHAT_ID:
     else:
         print(f'Telegram error {resp.status_code}: {resp.text[:200]}')
 else:
-    print('\n(No TELEGRAM_BOT_TOKEN/TELEGRAM_CHAT_ID configured — printing report instead)')
+    print('\n(No TELEGRAM_BOT_TOKEN/TELEGRAM_CHAT_ID configured, printing report instead)')
 
 print('\n--- REPORT ---')
 print(report.replace('<b>', '').replace('</b>', '').replace('<i>', '')

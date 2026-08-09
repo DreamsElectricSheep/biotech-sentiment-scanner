@@ -8,7 +8,7 @@ Monitors the configured ticker for:
   - An LLM-generated rationale for why it's moving + overall sentiment
 
 The LLM (Gemini by default) is used ONLY to summarize/explain a move that
-already happened from data already fetched — it never decides whether to
+already happened from data already fetched; it never decides whether to
 alert, and it never generates a trade signal. See README "Autonomy boundary".
 
 Intended to run every few minutes via cron during market hours, less often
@@ -38,7 +38,7 @@ GEMINI_URL = f'https://generativelanguage.googleapis.com/v1beta/models/{GEMINI_M
 TELEGRAM_BOT_TOKEN = config.TELEGRAM_BOT_TOKEN
 TELEGRAM_CHAT_ID = config.TELEGRAM_CHAT_ID
 
-# SEC EDGAR CIK for the ticker under coverage — see config.py / .env.example
+# SEC EDGAR CIK for the ticker under coverage; see config.py / .env.example
 SEC_CIK = config.SEC_CIK
 SEC_RSS_URL = f'https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK={SEC_CIK}&type=&dateb=&owner=include&count=10&search_text=&output=atom'
 
@@ -83,7 +83,7 @@ def save_state(state):
 
 def send_telegram(msg):
     if not TELEGRAM_BOT_TOKEN or not TELEGRAM_CHAT_ID:
-        log('No TELEGRAM_BOT_TOKEN/TELEGRAM_CHAT_ID configured — skipping send')
+        log('No TELEGRAM_BOT_TOKEN/TELEGRAM_CHAT_ID configured, skipping send')
         return
     try:
         url = f'https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage'
@@ -108,10 +108,10 @@ def minutes_since(ts_str):
         return 9999
 
 
-# ── Gemini (rationale generation only — see module docstring) ────────────────
+# ── Gemini (rationale generation only; see module docstring) ────────────────
 def gemini_analyze(prompt):
     if not GEMINI_API_KEY:
-        log('No GEMINI_API_KEY configured — skipping analysis')
+        log('No GEMINI_API_KEY configured, skipping analysis')
         return None
     for attempt in range(3):
         try:
@@ -254,12 +254,12 @@ Recent SEC filings:
 StockTwits sentiment: {st_block}
 
 Tasks:
-1. WHY IS IT MOVING? Identify the most likely catalyst(s) driving today's price action. Be specific — mention the news item, filing, or macro factor if identifiable.
+1. WHY IS IT MOVING? Identify the most likely catalyst(s) driving today's price action. Be specific: mention the news item, filing, or macro factor if identifiable.
 2. SENTIMENT: What is the overall market sentiment right now? (BULLISH / BEARISH / NEUTRAL) and why.
 3. RISK FACTORS: List 1-2 key near-term risks to watch.
 4. CONFIDENCE: How confident are you in your analysis? (LOW / MEDIUM / HIGH)
 
-Keep response concise — 4-6 sentences total. Start with the sentiment label on its own line."""
+Keep response concise: 4-6 sentences total. Start with the sentiment label on its own line."""
 
 
 def run_analysis(trigger, current_price, prior_close, pct_change, news_items, sec_filings):
@@ -286,7 +286,7 @@ def format_news_alert(news_item, sec_filing, current_price, pct_from_close, anal
     if sec_filing:
         header = f"*{TICKER} SEC Filing: {sec_filing['filing_type']}*\n_{sec_filing['title']}_"
     else:
-        header = f"*{TICKER} News Alert*\n_{news_item['title']}_\n— {news_item.get('publisher', '')}"
+        header = f"*{TICKER} News Alert*\n_{news_item['title']}_\nvia {news_item.get('publisher', '')}"
 
     return f"""{header}
 
@@ -303,7 +303,7 @@ def format_weekly_brief(current_price, prior_close, pct_from_close, day_high, da
     vol_str = f"{volume:,}" if volume else "N/A"
     hi_lo = f"${day_high:.4f} / ${day_low:.4f}" if day_high else "N/A"
 
-    return f"""*{TICKER} Weekly Brief — {datetime.now().strftime('%b %d, %Y')}*
+    return f"""*{TICKER} Weekly Brief: {datetime.now().strftime('%b %d, %Y')}*
 
 Price: *${current_price:.4f}* ({pct_from_close:+.1f}% vs close)
 Hi/Lo: {hi_lo} | Vol: {vol_str}
@@ -328,7 +328,7 @@ def main():
 
     current_price, prior_close, day_open, day_high, day_low, volume = get_price_data()
     if not current_price:
-        log("Could not fetch price — aborting")
+        log("Could not fetch price: aborting")
         return
 
     if not prior_close and state.get('prior_close'):
@@ -379,7 +379,7 @@ def main():
 
     elif new_sec and minutes_since(state.get('last_news_alert_ts')) >= NEWS_ALERT_COOLDOWN_MIN:
         filing = new_sec[0]
-        log(f"New SEC filing: {filing['filing_type']} — {filing['title']}")
+        log(f"New SEC filing: {filing['filing_type']}, {filing['title']}")
         analysis, st_sent, bull, bear = run_analysis(
             f"New SEC filing: {filing['filing_type']}", current_price,
             prior_close or current_price, pct_from_close,
@@ -427,7 +427,7 @@ def main():
         log("Price alert sent")
 
     else:
-        log(f"No trigger — price {pct_from_close:+.1f}% from close, {pct_intraday:+.1f}% intraday, no new news")
+        log(f"No trigger: price {pct_from_close:+.1f}% from close, {pct_intraday:+.1f}% intraday, no new news")
 
     state['last_price'] = current_price
     state['prior_close'] = prior_close or state.get('prior_close')
